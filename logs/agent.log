@@ -1,0 +1,32 @@
+2026-06-15 19:08:43  INFO      ============================================================
+2026-06-15 19:08:43  INFO      REWARD AGENT — spuštění
+2026-06-15 19:08:43  INFO      Datum:       2026-06-15
+2026-06-15 19:08:43  INFO      Data 6M:     data/VSE_Data_6M.xlsx
+2026-06-15 19:08:43  INFO      Data labels: data/VSE_Data_LABELY.xlsx
+2026-06-15 19:08:43  INFO      Data demo:   data/VSE_Data_DEMO.xlsx
+2026-06-15 19:08:43  INFO      Výstup:      agent/output
+2026-06-15 19:08:43  INFO      ============================================================
+2026-06-15 19:08:43  INFO      Krok 0/4 — kontroluji prostředí a data...
+2026-06-15 19:08:43  INFO        Config:            config/config.yaml
+2026-06-15 19:08:43  INFO        MAIN práh příjmu:  15,000 Kč
+2026-06-15 19:08:43  INFO        MAIN práh transakcí: 3
+2026-06-15 19:08:43  INFO        OK — knihovny nainstalovány, data nalezena a čitelná
+2026-06-15 19:08:43  INFO      Krok 1/4 — načítám data...
+2026-06-15 19:08:56  INFO        Detekované měsíce: ['112025', '122025', '012026', '022026', '032026', '042026']
+2026-06-15 19:08:56  INFO        Aktuální měsíc:    042026
+2026-06-15 19:08:56  INFO        Celkem zákazníků:  9,788
+2026-06-15 19:08:56  INFO      Krok 2/4 — připravuji parametry scoringu...
+2026-06-15 19:08:56  INFO        Historie měsíců:   ['022026', '032026', '042026']
+2026-06-15 19:08:56  INFO        SECONDARY zákazníků k ohodnocení: 2,785
+2026-06-15 19:08:56  INFO      Krok 3/4 — počítám odměny a conversion score...
+2026-06-15 19:08:56  INFO        Výsledky — priority: {'LOW': 1124, 'MEDIUM': 941, 'HIGH': 720}
+2026-06-15 19:08:56  INFO        Výsledky — výzvy:   {'C1': 2251, 'C2': 1685, 'C3': 2065, 'C4': 857, 'C5': 1297}
+2026-06-15 19:08:56  INFO        Dříve MAIN:          864
+2026-06-15 19:08:56  INFO        Avg conversion score: 36.1
+2026-06-15 19:08:56  INFO      Krok 4/4 — generuji výstupní soubory...
+2026-06-15 19:09:00  INFO      ============================================================
+2026-06-15 19:09:00  INFO      Agent dokončen za 17.1s
+2026-06-15 19:09:00  INFO        excel : agent\output\odmeny_20260615.xlsx
+2026-06-15 19:09:00  INFO        csv   : agent\output\odmeny_20260615.csv
+2026-06-15 19:09:00  INFO        json  : agent\output\summary_20260615.json
+2026-06-15 19:09:00  INFO      ============================================================

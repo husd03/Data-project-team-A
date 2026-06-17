@@ -1,0 +1,21 @@
+{
+  "run_date": "2026-06-15",
+  "generated_at": "2026-06-15T19:09:00",
+  "total_secondary": 2785,
+  "priority_counts": {
+    "HIGH": 720,
+    "MEDIUM": 941,
+    "LOW": 1124
+  },
+  "challenge_counts": {
+    "C1": 2251,
+    "C2": 1685,
+    "C3": 2065,
+    "C4": 857,
+    "C5": 1297,
+    "C6": 0
+  },
+  "was_main_before": 864,
+  "avg_conversion_score": 36.14,
+  "zakazniku_prijem_0": 1591
+}

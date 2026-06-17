@@ -1,0 +1,131 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# Challenge Assignment Agent — Configuration
+# ═══════════════════════════════════════════════════════════════════════════
+#
+# This file controls every threshold, scoring weight, and challenge name
+# used by agent/reward_engine.py. Changing a value here changes the agent's
+# behaviour WITHOUT touching any Python code.
+#
+# After editing this file:
+#   1. Run the tests:  python -m pytest tests/ -v
+#   2. Run the agent:  python agent/run_agent.py
+#   3. Check agent/output/odmeny_*.xlsx "Souhrn" sheet — does the new
+#      challenge distribution still make sense?
+#
+# See VIBECODING.md for example prompts to ask an AI assistant to help
+# you change these values safely.
+# ═══════════════════════════════════════════════════════════════════════════
+
+
+# ── MAIN status definition ───────────────────────────────────────────────
+# A customer is "MAIN" in a given month when BOTH conditions hold:
+#   incoming_credit   >= income_threshold_czk
+#   transaction_count >= transaction_threshold
+main_status:
+  income_threshold_czk: 15000
+  transaction_threshold: 3
+
+  # Number of most-recent months used to compute rolling averages
+  # (avg_cr, avg_trx, avg_spb, avg_dc, avg_balance, ...)
+  history_months: 3
+
+
+# ── Agent-level settings ─────────────────────────────────────────────────
+agent:
+  # Maximum number of challenges assigned to a single customer.
+  # C1 is always force-included if the customer doesn't meet the income
+  # threshold, even if it would otherwise rank outside this limit.
+  max_challenges: 3
+
+
+# ── Conversion score (0-100) ─────────────────────────────────────────────
+# Measures how close a SECONDARY customer is to MAIN status overall.
+# It is a weighted sum of normalised behavioural signals, capped at 100,
+# then mapped to a priority tier (HIGH / MEDIUM / LOW).
+conversion_score:
+  weights:
+    income_ratio: 35          # min(avg_cr / income_threshold_czk, 1.0) * weight
+    transaction_activity: 20  # min(avg_trx / transaction_normalizer, 1.0) * weight
+    spb_engagement: 15        # min(avg_spb / spb_normalizer, 1.0) * weight
+    card_usage: 10            # min(avg_dc / card_normalizer, 1.0) * weight
+    was_main_bonus: 15        # flat bonus if customer was ever MAIN
+    balance_bonus: 5          # flat bonus if avg_balance > balance_bonus_threshold_czk
+
+  # Normalizers — the value at which a signal is considered "fully met" (caps at 1.0)
+  transaction_normalizer: 20
+  spb_normalizer: 20
+  card_normalizer: 20
+  balance_bonus_threshold_czk: 10000
+
+  priority_tiers:
+    high_min: 55     # conversion_score >= 55       -> HIGH
+    medium_min: 25   # 25 <= conversion_score < 55  -> MEDIUM
+                     # conversion_score < 25        -> LOW
+
+
+# ── Challenge scoring weights ─────────────────────────────────────────────
+# Each challenge (C1-C5) has a display name and a set of point values
+# added when specific conditions are met. The challenge with the highest
+# total score is assigned (up to agent.max_challenges per customer).
+#
+# The CONDITIONS themselves (e.g. "customer has no investment product",
+# "card usage is below 10/month") are defined in agent/reward_engine.py,
+# since they involve combinations of fields that are clearer as code.
+# This section controls the NUMBERS: how many points each condition is
+# worth, and the thresholds that decide whether a condition fires.
+
+challenges:
+
+  C1:
+    name: "Přijmout 15 000 Kč na účet"
+    points:
+      income_below_threshold_base: 60   # base points if avg_cr < income_threshold_czk
+      proximity_bonus_max: 30           # max extra points for being close to the threshold
+      was_main_before: 15
+      transactions_already_met: 10      # bonus if avg_trx >= transaction_threshold
+
+  C2:
+    name: "Zaplatit 10x kartou za měsíc"
+    thresholds:
+      card_usage_target: 10             # the "10x" in the challenge name
+      card_usage_close_band: 5          # avg_dc in [card_usage_close_band, card_usage_target) -> "close" bonus
+      income_for_card_bonus: 5000       # avg_cr >= this -> bonus for "has income, can use card"
+    points:
+      below_target_base: 50             # base points if avg_dc < card_usage_target
+      close_to_target: 20               # avg_dc in the "close" band
+      some_usage: 10                    # 0 < avg_dc < close band
+      has_income_bonus: 10
+
+  C3:
+    name: "Nastavit trvalý příkaz na energie nebo telco"
+    thresholds:
+      balance_for_household_bonus: 5000
+      min_age_for_household_bonus: 30
+    points:
+      no_utility_base: 45
+      has_balance_bonus: 15
+      age_bonus: 10
+
+  C4:
+    name: "Nastavit platbu za předplatné (Netflix, Spotify…)"
+    thresholds:
+      max_age_for_streaming_bonus: 45
+      min_card_usage_for_active_bonus: 3
+    points:
+      no_subscription_base: 35
+      young_age_bonus: 15
+      active_card_bonus: 10
+
+  C5:
+    name: "Vložit 10 000 Kč do investic"
+    thresholds:
+      min_salary_level: 3
+      balance_for_investment_bonus: 50000
+      term_deposit_threshold: 10000
+      max_age_for_horizon_bonus: 45
+    points:
+      no_investment_base: 40
+      high_salary_bonus: 25
+      high_balance_bonus: 25
+      term_deposit_bonus: 15
+      young_age_bonus: 10
